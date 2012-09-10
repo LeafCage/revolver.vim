@@ -1,5 +1,9 @@
 *revolver.jax*	markやnamed registerに使う文字を回転させる
 
+Version : 1.0
+Author  : LeafCage <LeafCage+vim@gmail.com>
+License : MIT license
+
 ==============================================================================
 概要						*revolver-introduction*
 
