@@ -1,5 +1,5 @@
 " Version : 1.0
-" Author  : LeafCage <LeafCage+vim@gmail.com>
+" Author  : LeafCage <LeafCage+vim * gmail.com>
 " License : MIT license
 
 let s:save_cpo = &cpo| set cpo&vim
@@ -45,12 +45,13 @@ endfunction
 "}}}
 
 function! s:__jump_by_var6idxfile(varname, idxfilename, d, cylinder) "{{{
-  exe 'let char = cylinder['. a:varname. ']'
   if exists(a:varname)
+    exe 'let char = a:cylinder['. a:varname. ']'
     exe 'normal! `'. char
     echo 'Revolver: jump to "'. char. '"'
   elseif filereadable(a:d. a:idxfilename)
-    let g:revolver_mark_idx = readfile(a:d. a:idxfilename)[0]
+    exe 'let '. a:varname. ' = readfile(a:d. a:idxfilename)[0]'
+    exe 'let char = a:cylinder['. a:varname. ']'
     exe 'normal! `'. char
     echo 'Revolver: jump to "'. char. '"'
   else
@@ -90,19 +91,19 @@ endfunction
 
 "-----------------------------------------------------------------------------
 function! s:__mark_typeB(cylinder) "{{{
-  let d = s:_make_revolverDir()
 
   if a:cylinder[0] =~# '\u'
     call s:___uppercaseMark(a:cylinder)
   else
-    call s:___lowercaseMark(a:cylinder, d)
+    call s:___lowercaseMark(a:cylinder)
   endif
 endfunction
 "}}}
 
-function! s:___lowercaseMark(cylinder, d) "{{{
+function! s:___lowercaseMark(cylinder) "{{{
+  let d = s:_make_revolverDir()
   let crrb_NN = substitute(substitute(expand('%:p'), ':', '=-', 'g'), '[/\\]', '=+', 'g')
-  call s:_cycle8writefile_typeBidx('b:local_mark_idx', crrb_NN, a:d, a:cylinder)
+  call s:_cycle8writefile_typeBidx('b:local_mark_idx', d.'marks/', crrb_NN, a:cylinder)
 
   exe 'normal! m'. a:cylinder[b:local_mark_idx]
   echo 'Revolver: marked "'. a:cylinder[b:local_mark_idx]. '"'
@@ -111,7 +112,8 @@ endfunction
 
 function! s:___uppercaseMark(cylinder) "{{{
   let d = fnamemodify(g:revolver_dir, ':p')
-  call s:_cycle8writefile_typeBidx('g:revolver_mark_idx', 'global_mark_idx', d, a:cylinder)
+  let d = s:_make_revolverDir()
+  call s:_cycle8writefile_typeBidx('g:revolver_mark_idx', d, 'global_mark_idx', a:cylinder)
 
   exe 'normal! m'. a:cylinder[g:revolver_mark_idx]
   echo 'Revolver: marked "'. a:cylinder[g:revolver_mark_idx]. '"'
@@ -143,7 +145,7 @@ endfunction
 
 function! s:__recording_typeB(cylinder) "{{{
   let d = s:_make_revolverDir()
-  call s:_cycle8writefile_typeBidx('g:revolver_recording_char', 'recording_idx', d, a:cylinder)
+  call s:_cycle8writefile_typeBidx('g:revolver_recording_char', d, 'recording_idx', a:cylinder)
 
   exe 'normal! q'. a:cylinder[g:revolver_recording_char]
   echo 'Revolver: using "'. a:cylinder[g:revolver_recording_char]. '"'
@@ -189,7 +191,7 @@ endfunction
 
 function! s:__use_register_typeB(cylinder) "{{{
   let d = s:_make_revolverDir()
-  call s:_cycle8writefile_typeBidx('g:revolver_usual_reg', 'usual_reg_idx', d, a:cylinder)
+  call s:_cycle8writefile_typeBidx('g:revolver_usual_reg', d, 'usual_reg_idx', a:cylinder)
 
   let mode = mode()
   if mode =~ '[iRc]'
@@ -262,7 +264,7 @@ function! s:_make_revolverDir() "{{{
 endfunction
 "}}}
 
-function! s:_cycle8writefile_typeBidx(varname, idxfilename, d, cylinder) "{{{
+function! s:_cycle8writefile_typeBidx(varname, d, idxfilename, cylinder) "{{{
   if !exists(a:varname)
     if filereadable(a:d. a:idxfilename)
       exe 'let '. a:varname. ' = readfile("'. a:d. a:idxfilename. '")[0]'
