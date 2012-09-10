@@ -3,38 +3,188 @@
 ==============================================================================
 概要						*revolver-introduction*
 
-	Vimのregisterやmarkは単発拳銃のようなものだった。
-	aからzの26挺のマスケット銃が与えられ、どの銃にどの弾が込められているか
-	の記憶や、どの銃に弾を込めるかの判断はユーザーに委ねられていた。
-	revolver.vimは回転式拳銃のように弾倉を回転させる。
-	ユーザは弾が込められているかどうかを確認する必要はない。
-	銃を持ち替える必要もない。
-	ただ引き金を引けばいい。
+markやregisterを使う時に添える文字({a-z}や{A-Z}など)を回転させるプラグインであ
+る。回転のさせ方には2タイプある。
+通常タイプは、最新の使用に常にある文字が使われ、古い情報は一つずつずれていく。 >
+	(例: aに新しくマークされ、古いaはbに、古いbはcにずれる)
+TypeBは、使用する度に使用される文字がずれていく。 >
+	(例: 直前に使った文字がaなら、次に使われる文字はb、その次はc)
+TypeBの使用時は設定ファイルが|g:revolver_dir|に作られる。
+どちらのタイプを使うかはキーマッピングで決めると良い。
 
-------------------------------------------------------------------------------
+
+==============================================================================
+キーマッピング					*revolver-keymappings*
+
+設定例A >
+	noremap m <Nop>
+	nmap mm <Plug>(revolver-mark-local)
+	nmap mM <Plug>(revolver-mark-global)
+	nmap zq <Plug>(revolver-register-recording)
+
+設定例B (typeB使用時) >
+	noremap m <Nop>
+	nmap mm <Plug>(revolver-mark-local-typeB)
+	nmap mM <Plug>(revolver-mark-global-typeB)
+	nmap mj <Plug>(revolver-jump-last-local-mark)
+	nmap mJ <Plug>(revolver-jump-last-global-mark)
+	nmap zq <Plug>(revolver-register-recording-typeB)
+	nmap zQ <Plug>(revolver-register-recording-typeB)
+	nmap z@ <Plug>(revolver-register-play-last-recording)
+
 mark
-	g:revolver_mark_local_magazine == ['h', 'i', 'j', 'k', 'l', 'm']
-	のとき
-
-	最新のmarkにはリスト|g:revolver_mark_local_magazine|の最後の要素の文字
-	が使われる。この例では、'm'にmarkされる。すなわち、バインドmmをしたの
-	と同じ。
-	最新から一つ前のmarkは、'l'。二つ前は、'k'。と、一つずつずれる。
-	すなわち、最新のマークに飛ぶには`m、一つ前のマークに飛ぶには`l、三つ前
-	には`jをバインドすればいい。
-	このようなマークを有効にするには|<Plug>(revolver-mark-local)|をどこか
-	適当なキーに割り当てる。
-	小文字マークはバッファにローカルである。
+--------------------------------------
+*<Plug>(revolver-mark-local)*
+	小文字のマーク{a-z}をセットする。
+	マークに使われる文字について、|g:revolver_mark_local_cylinder|の
+	一番最初の文字に最新のマークがセットされ、古いマークは一つずつずれる。
 
 
-MARK
-	大文字マークを使うにはバインドに|<Plug>(revolver-mark-global)|を使う。
-	変数には|g:revolver_mark_global_magazine|を使う。
-	大文字マークはバッファ間で有効である。（バッファを越えて記録できる）
+*<Plug>(revolver-mark-local-typeB)*
+	これはTypeBである。
+	小文字のマーク{a-z}をセットする。
+	マークに使われる文字について、|g:revolver_mark_local_cylinder|の
+	一番最初の文字が最初に使われ、次に使う時には二番目の文字というように使
+	われる文字がスライドしていく。
 
-	注意：大文字マークをするとき、過去に大文字マークしたバッファがロードさ
-	れていなければロードされる。ファイルが削除されていたりリネームされてい
-	ても関係なく。
+
+*<Plug>(revolver-mark-global)*
+	大文字のマーク{A-Z}をセットする。
+	マークに使われる文字について、|g:revolver_mark_global_cylinder|の
+	一番最初の文字に最新のマークがセットされ、古いマークは一つずつずれる。
+
+
+*<Plug>(revolver-mark-global-typeB)*
+	これはTypeBである。
+	大文字のマーク{A-Z}をセットする。
+	マークに使われる文字について、|g:revolver_mark_global_cylinder|の
+	一番最初の文字が最初に使われ、次に使う時には二番目の文字というように使
+	われる文字がスライドしていく。
+
+
+*<Plug>(revolver-jump-last-local-mark)*
+	typeBを使っている時に効果がある。
+	編集中のファイルの最新の小文字マークにジャンプする。
+
+
+*<Plug>(revolver-jump-last-global-mark)*
+	typeBを使っている時に効果がある。
+	最新の大文字マークにジャンプする。
+
+
+
+recording
+--------------------------------------
+*<Plug>(revolver-register-recording)*
+	|recording|をする。
+	使われる文字について、|g:revolver_register_recording_cylinder|の
+	一番最初の文字に最新のレコーディングがセットされ、古いレコーディングは
+	一つずつずれる。
+
+
+*<Plug>(revolver-register-recording-typeB)*
+	これはTypeBである。
+	|recording|をする。
+	使われる文字について、|g:revolver_register_recording_cylinder|の
+	一番最初の文字が最初に使われ、次に使う時には二番目の文字というように使
+	われる文字がスライドしていく。
+
+
+*<Plug>(revolver-register-add-recording)*
+	typeBを使っている時に効果がある。
+	最後の|recording|に追記をする。つまり大文字レジスタ{A-Z}を使う。
+
+
+*<Plug>(revolver-register-play-last-recording)*
+	typeBを使っている時に効果がある。
+	最後の|recording|を再生する。
+
+
+
+register（非推奨）
+--------------------------------------
+*<Plug>(revolver-register-usual)*
+	|g:revolver_register_enable_logging|を1か2にしないと機能しない。
+	何かを記録するためにregisterを呼び出す。
+	つまりノーマルモードで "{a-z} の入力がなされる。
+	(インサートモードやコマンドラインでは <C-r>{a-z} の入力)
+	使われる文字について、|g:revolver_register_normal_cylinder|の
+	一番最初の文字が使われる。
+
+
+*<Plug>(revolver-register-conscious)*
+	|g:revolver_register_enable_logging|を1か2にしないと機能しない。
+	|<Plug>(revolver-register-usual)|と挙動は同じ。
+	ただし、|g:revolver_register_normal_cylinder|の代わりに
+	|g:revolver_register_conscious_cylinder|が使われる。
+
+
+*<Plug>(revolver-register-usual-typeB)*
+	これはTypeBである。
+	|g:revolver_register_enable_logging|が定義されていると機能しない。
+	何かを記録するためにregisterを呼び出す。
+	つまりノーマルモードで次に使う "{a-z} の入力がなされる。
+	(インサートモードやコマンドラインでは <C-r>{a-z} の入力)
+	使われる文字について、|g:revolver_register_normal_cylinder|の
+	一番最初の文字が最初に使われ、次に使う時には二番目の文字というように使
+	われる文字がスライドしていく。
+
+
+==============================================================================
+変数						*revolver-variables*
+
+*g:revolver_dir*
+	TypeB使用時に使うファイルを作成する場所。
+	既定値は'~/.vim-revolver/'
+
+
+*g:revolver_mark_local_cylinder*
+	小文字マークに使用。リストでも文字列でも機能する。
+	すなわち['a', 'b', 'c']でも"abc"でも。
+	既定値は"abcdefghijklmnopqrstuvwxyz"
+
+
+*g:revolver_mark_global_cylinder*
+	大文字マークに使用。リストでも文字列でも機能する。
+	すなわち['a', 'b', 'c']でも"abc"でも。
+	既定値は"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+
+*g:revolver_register_recording_cylinder*
+	|recording|で使用されるレジスタ。リストでも文字列でも機能する。
+	すなわち['a', 'b', 'c']でも"abc"でも。
+	既定値は['v', 'w', 'x', 'y', 'z']
+
+
+*g:revolver_register_normal_cylinder*
+	通常利用にで使用されるレジスタ。リストでも文字列でも機能する。
+	すなわち['a', 'b', 'c']でも"abc"でも。既定値は
+	['h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u']
+
+
+*g:revolver_register_conscious_cylinder*
+	第二のレジスタ。レジスタの使い分けを行いたい時に利用する。
+	|<Plug>(revolver-register-conscious)|を使わないのなら意味はない。
+	リストでも文字列でも機能する。すなわち['a', 'b', 'c']でも"abc"でも。
+	既定値は['a', 'b', 'c', 'd', 'e', 'f', 'g']
+
+
+*g:revolver_register_enable_logging*
+	この値が1だと|<Plug>(revolver-register-usual)|と
+	|<Plug>(revolver-register-conscious)|が機能するようになる。
+	この値が2だと|g:revolver_register_normal_cylinder|に無名レジスタでヤン
+	ク（デリート）などをした内容が自動で記録される。
+	非推奨のため既定では定義されていない。
+	また、この機能はTypeBをサポートしていない。
+
+==============================================================================
+備考						*revolver-remarks*
+
+typeBを使っている時、直前に使った小文字マークはb:local_mark_idxに、大文字マー
+クはg:revolver_mark_idxに記録されているはずである。
+また、recordingはg:revolver_recording_charに、通常利用のレジスタは
+g:revolver_usual_regに記録されているはずである。
+覗き見たい時はこれらの変数を覗くとよい。
 
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:noet:fen:fdl=0:nolist:
