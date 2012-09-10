@@ -1,5 +1,5 @@
 " Version : 1.0
-" Author  : LeafCage <LeafCage+vim@gmail.com>
+" Author  : LeafCage <LeafCage+vim * gmail.com>
 " License : MIT license
 
 let s:save_cpo = &cpo| set cpo&vim
