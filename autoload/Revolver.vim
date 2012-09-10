@@ -45,12 +45,13 @@ endfunction
 "}}}
 
 function! s:__jump_by_var6idxfile(varname, idxfilename, d, cylinder) "{{{
-  exe 'let char = cylinder['. a:varname. ']'
   if exists(a:varname)
+    exe 'let char = a:cylinder['. a:varname. ']'
     exe 'normal! `'. char
     echo 'Revolver: jump to "'. char. '"'
   elseif filereadable(a:d. a:idxfilename)
-    let g:revolver_mark_idx = readfile(a:d. a:idxfilename)[0]
+    exe 'let '. a:varname. ' = readfile(a:d. a:idxfilename)[0]'
+    exe 'let char = a:cylinder['. a:varname. ']'
     exe 'normal! `'. char
     echo 'Revolver: jump to "'. char. '"'
   else
