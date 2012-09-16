@@ -1,11 +1,11 @@
-" Version : 1.0
-" Author  : LeafCage <LeafCage+vim * gmail.com>
-" License : MIT license
-
 let s:save_cpo = &cpo| set cpo&vim
 "=============================================================================
 let s:V = vital#of('revolver')
-let s:O = s:V.import('Lclib.List')
+let s:LL = s:V.import('Lclib.List')
+let s:LV = s:V.import('Lclib.Vim')
+
+"-----------------------------------------------------------------------------
+"Actions
 
 function! Revolver#Mark(_typeB, cylinder) "{{{
   let cylinder = type(a:cylinder)==type('')? s:_str2list(a:cylinder) : a:cylinder
@@ -59,6 +59,50 @@ function! s:__jump_by_var6idxfile(varname, idxfilename, d, cylinder) "{{{
   endif
 endfunction
 "}}}
+
+
+function! Revolver#Delmarks(_all, ...) "{{{
+  let marks = ''
+  if a:0
+    for pkd in a:000
+      let marks .= type(pkd)==type('') ? pkd : join(pkd, '')
+    endfor
+  endif
+  if !empty(a:_all)
+    let g = type(g:revolver_mark_global_cylinder)==type('') ? g:revolver_mark_global_cylinder : join(g:revolver_mark_global_cylinder, '')
+    let d = fnamemodify(g:revolver_dir, ':p')
+    let l = type(g:revolver_mark_local_cylinder)==type('') ? g:revolver_mark_local_cylinder : join(g:revolver_mark_global_cylinder, '')
+    let marks .= g . l
+    if exists('g:revolver_mark_idx')
+      unlet g:revolver_mark_idx
+      call delete(d. 'global_mark_idx')
+    endif
+    if exists('b:local_mark_idx')
+      unlet b:local_mark_idx
+      let crrb_NN = substitute(substitute(expand('%:p'), ':', '=-', 'g'), '[/\\]', '=+', 'g')
+      call delete(d. 'marks/'. crrb_NN)
+    endif
+  endif
+  if empty(marks)
+    return
+  endif
+
+  let viminfoPath = expand(s:LV.gs_viminfoPath(), ':p')
+  if !empty(viminfoPath)
+    call delete(viminfoPath)
+  endif
+
+  exe 'delmarks '. marks
+  wviminfo
+endfunction
+"}}}
+
+
+
+
+
+"=============================================================================
+"subroutine
 
 "-----------------------------------------------------------------------------
 function! s:__mark_typeA(cylinder) "{{{
@@ -273,7 +317,7 @@ function! s:_cycle8writefile_typeBidx(varname, d, idxfilename, cylinder) "{{{
     endif
   endif
 
-  exe 'let '. a:varname. ' = s:O.gi_cycle_poi(0, '. a:varname. ', a:cylinder)'
+  exe 'let '. a:varname. ' = s:LL.gi_cycle_poi(0, '. a:varname. ', a:cylinder)'
   exe 'call writefile(['. a:varname. '], "'. a:d. a:idxfilename. '")'
 endfunction
 "}}}
