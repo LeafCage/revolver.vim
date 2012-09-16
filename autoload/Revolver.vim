@@ -68,7 +68,7 @@ function! Revolver#Delmarks(_all, ...) "{{{
       let marks .= type(pkd)==type('') ? pkd : join(pkd, '')
     endfor
   endif
-  if !empty(a:_all)
+  if !empty(a:_all) "{{{
     let g = type(g:revolver_mark_global_cylinder)==type('') ? g:revolver_mark_global_cylinder : join(g:revolver_mark_global_cylinder, '')
     let d = fnamemodify(g:revolver_dir, ':p')
     let l = type(g:revolver_mark_local_cylinder)==type('') ? g:revolver_mark_local_cylinder : join(g:revolver_mark_global_cylinder, '')
@@ -82,18 +82,22 @@ function! Revolver#Delmarks(_all, ...) "{{{
       let crrb_NN = substitute(substitute(expand('%:p'), ':', '=-', 'g'), '[/\\]', '=+', 'g')
       call delete(d. 'marks/'. crrb_NN)
     endif
-  endif
+  endif"}}}
   if empty(marks)
     return
   endif
 
-  let viminfoPath = expand(s:LV.gs_viminfoPath(), ':p')
+  let viminfoPath = fnamemodify(expand(s:LV.gs_viminfoPath()), ':p')
   if !empty(viminfoPath)
     call delete(viminfoPath)
+  else !empty(&vi)
+    call delete(fnamemodify(expand('~/_viminfo'), ':p'))
   endif
 
   exe 'delmarks '. marks
-  wviminfo
+  if !empty(viminfoPath) || !empty(&vi)
+    wviminfo
+  endif
 endfunction
 "}}}
 
