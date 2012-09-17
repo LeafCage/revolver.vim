@@ -70,18 +70,11 @@ function! Revolver#Delmarks(_all, ...) "{{{
   endif
   if !empty(a:_all) "{{{
     let g = type(g:revolver_mark_global_cylinder)==type('') ? g:revolver_mark_global_cylinder : join(g:revolver_mark_global_cylinder, '')
-    let d = fnamemodify(g:revolver_dir, ':p')
     let l = type(g:revolver_mark_local_cylinder)==type('') ? g:revolver_mark_local_cylinder : join(g:revolver_mark_global_cylinder, '')
     let marks .= g . l
-    if exists('g:revolver_mark_idx')
-      unlet g:revolver_mark_idx
-      call delete(d. 'global_mark_idx')
-    endif
-    if exists('b:local_mark_idx')
-      unlet b:local_mark_idx
-      let crrb_NN = substitute(substitute(expand('%:p'), ':', '=-', 'g'), '[/\\]', '=+', 'g')
-      call delete(d. 'marks/'. crrb_NN)
-    endif
+
+    call Revolver#Reset_typeB_counter(1)
+    call Revolver#Reset_typeB_counter(0)
   endif"}}}
   if empty(marks)
     return
@@ -90,7 +83,7 @@ function! Revolver#Delmarks(_all, ...) "{{{
   let viminfoPath = fnamemodify(expand(s:LV.gs_viminfoPath()), ':p')
   if !empty(viminfoPath)
     call delete(viminfoPath)
-  else !empty(&vi)
+  elseif !empty(&vi)
     call delete(fnamemodify(expand('~/_viminfo'), ':p'))
   endif
 
@@ -102,6 +95,22 @@ endfunction
 "}}}
 
 
+function! Revolver#Reset_typeB_counter(_global) "{{{
+  let d = fnamemodify(g:revolver_dir, ':p')
+  if a:_global
+    if exists('g:revolver_mark_idx')
+      unlet g:revolver_mark_idx
+    endif
+    call delete(d. 'global_mark_idx')
+  else
+    if exists('b:local_mark_idx')
+      unlet b:local_mark_idx
+    endif
+    let crrb_NN = substitute(substitute(expand('%:p'), ':', '=-', 'g'), '[/\\]', '=+', 'g')
+    call delete(d. 'marks/'. crrb_NN)
+  endif
+endfunction
+"}}}
 
 
 
@@ -139,7 +148,6 @@ endfunction
 
 "-----------------------------------------------------------------------------
 function! s:__mark_typeB(cylinder) "{{{
-
   if a:cylinder[0] =~# '\u'
     call s:___uppercaseMark(a:cylinder)
   else

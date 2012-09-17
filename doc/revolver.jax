@@ -160,8 +160,20 @@ register（非推奨）
 :Delmarks!
 	|g:revolver_mark_global_cylinder| |g:revolver_mark_local_cylinder|に指
 	定されたマークを全て削除する。
-	TypeBを使っている場合、g:revolver_mark_idx、b:local_mark_idxの値もリセ
-	ットされる。
+	TypeBを使っている場合、g:revolver_mark_idx、b:local_mark_idxもリセット
+	される。
+
+
+*:RevolverResetMarks*
+:RevolverResetMarks[!]
+	TypeBでの現在バッファのb:local_mark_idxをリセットする。次にマークで使
+	われる文字は、|g:revolver_mark_local_cylinder|の一番最初の文字に戻る。
+
+	!を付けると大文字マークのインデックスg:revolver_mark_idxをリセットする
+	。次に使われる文字は|g:revolver_mark_global_cylinder|の最初の文字であ
+	る。
+	なお、このコマンドではマークは削除されない。次のマークに使われる文字が
+	リセットされるだけである。
 
 
 ==============================================================================
