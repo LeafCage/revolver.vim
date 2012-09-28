@@ -193,8 +193,8 @@ function! Revolver#Recording(_typeB, cylinder) "{{{
     call s:__recording_typeB(cylinder)
   else
     call s:__revolve_oldreg(cylinder)
-    exe 'normal! q'. cylinder[0]
     echo 'Revolver: using "'. cylinder[0]. '"'
+    exe 'normal! q'. cylinder[0]
   endif
 endfunction
 "}}}
@@ -291,12 +291,12 @@ function! s:__revolve_oldreg(cylinder) "{{{
   let c = len(a:cylinder)-1
   while c > 0
     while c > 0
-      exe 'let moreOldReg = @'. cylinder[(c-1)]
+      exe 'let moreOldReg = @'. a:cylinder[(c-1)]
       if empty(moreOldReg)
         let c -= 1
         continue
       endif
-      exe 'let @'. cylinder[c]. '= moreOldReg'
+      exe 'let @'. a:cylinder[c]. '= moreOldReg'
       let c -= 1
     endwhile
   endwhile
