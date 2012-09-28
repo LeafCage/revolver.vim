@@ -1,7 +1,3 @@
-" Version : 1.0
-" Author  : LeafCage <LeafCage+vim * gmail.com>
-" License : MIT license
-
 let s:save_cpo = &cpo| set cpo&vim
 "=============================================================================
 
@@ -13,9 +9,8 @@ noremap <silent><Plug>(revolver-mark-global-typeB) :<C-u>call Revolver#Mark(1, g
 noremap <silent><Plug>(revolver-jump-last-local-mark) :<C-u>call Revolver#Jump(0, g:revolver_mark_local_cylinder)<CR>
 noremap <silent><Plug>(revolver-jump-last-global-mark) :<C-u>call Revolver#Jump(1, g:revolver_mark_global_cylinder)<CR>
 
-"viminfoファイルの大文字マークを抹消できるようにする（通常だと大文字マークは手動でしか消せない）
-"fo=nのviminfoを削除してからviminfoをfo=nに書き出し
-command! -nargs=+ -bang Delmarks    call <SID>Delmarks(<bang>, <args>)
+command! -nargs=* -bang Delmarks    call Revolver#Delmarks('<bang>', <f-args>)
+command! -bang RevolverResetMarks    call Revolver#Reset_typeB_counter(!empty('<bang>'))
 
 
 let g:revolver_dir = exists('g:revolver_dir') ? g:revolver_dir : '~/.vim-revolver/'
@@ -29,11 +24,6 @@ if !exists('g:revolver_mark_global_cylinder')
 endif
 
 
-function! s:Delmarks(_all, marks) "{{{
-  if empty(a:_all)
-  endif
-endfunction
-"}}}
 "}}}
 
 
