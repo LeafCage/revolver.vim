@@ -86,6 +86,9 @@ recording
 	使われる文字について、|g:revolver_register_recording_cylinder|の
 	一番最初の文字に最新のレコーディングがセットされ、古いレコーディングは
 	一つずつずれる。
+	これを標準のrecording開始キー|q|と置き換えるのはお勧めしない。標準とは
+	別のキーにするべきである。なぜなら、recording終了キーも|q|であるからで
+	ある。
 
 
 *<Plug>(revolver-register-recording-typeB)*
@@ -94,6 +97,9 @@ recording
 	使われる文字について、|g:revolver_register_recording_cylinder|の
 	一番最初の文字が最初に使われ、次に使う時には二番目の文字というように使
 	われる文字がスライドしていく。
+	これを標準のrecording開始キー|q|と置き換えるのはお勧めしない。標準とは
+	別のキーにするべきである。なぜなら、recording終了キーも|q|であるからで
+	ある。
 
 
 *<Plug>(revolver-register-add-recording)*
@@ -232,14 +238,6 @@ typeBを使っている時、直前に使った小文字マークはb:local_mark
 また、recordingはg:revolver_recording_charに、通常利用のレジスタは
 g:revolver_usual_regに記録されているはずである。
 覗き見たい時はこれらの変数を覗くとよい。
-
-
-==============================================================================
-よろしくないこと				*revolver-issues*
-
-Recordingにおいて、使用された文字が、recording終了後に入力されてしまう。
-たとえば'v'という文字をRecordingに使用すると、recording終了後にビジュアルモー
-ドが開始される。
 
 
 ==============================================================================
